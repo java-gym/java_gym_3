@@ -72,4 +72,21 @@ class SolutionTest {
         var registers = new Registers(2, 4, 3);
         storeWithSingleLookup(registers, dataStream, searchItem, null);
     }
+
+    @Test
+    void testLargeRegisters() {
+        var dataStream = DataStream.range(0, 200000, 1);
+        var searchItem = Data.of((200000-(200+4200))-42);
+        var registers = new Registers(200, 4200, 200, 200000);
+        storeWithSingleLookup(registers, dataStream, searchItem, 2);
+    }
+
+
+    @Test
+    void testLargeStream() {
+        var dataStream = DataStream.range(0, 5_000_000, 1);
+        var searchItem = Data.of(5_000_000-440);
+        var registers = new Registers(12, 423, 20, 513);
+        storeWithSingleLookup(registers, dataStream, searchItem, 2);
+    }
 }
