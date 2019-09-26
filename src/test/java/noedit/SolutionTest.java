@@ -45,7 +45,8 @@ class SolutionTest {
             }
             solution.store(dataItem.get());
         }
-        solution.lookup(searchItem);
+        var answer = solution.lookup(searchItem);
+        assertTrue(answer.isEmpty());
     }
 
     @Test
