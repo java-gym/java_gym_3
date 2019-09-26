@@ -39,6 +39,6 @@ public final class Data {
 
     @Override
     public String toString() {
-        return String.format("#%05d}", nr);
+        return String.format("#%05d", nr);
     }
 }
