@@ -38,7 +38,7 @@ public class Solution {
      * @implNote The maximum worst-case complexity is logarithmic {@code (O(log(n)))}.
      */
     @Nonnull
-    public Optional<Integer> store(@Nonnull Data storeItem) {
+    public void store(@Nonnull Data storeItem) {
         //TODO: Implement your solution here
         throw new UnsupportedOperationException("solution not yet implemented");
     }
