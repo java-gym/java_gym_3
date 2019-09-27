@@ -89,4 +89,48 @@ class SolutionTest {
         var registers = new Registers(12, 423, 20, 513);
         storeWithSingleLookup(registers, dataStream, searchItem, 2);
     }
+
+    @Test
+    void testLotsOfSmallRegistersWithoutRollover() {
+        var dataStream = DataStream.range(0, 6, 1);
+        var searchItem = Data.of(0);
+        var registers = new Registers(1, 1, 1, 1, 1, 1);
+        storeWithSingleLookup(registers, dataStream, searchItem, 5);
+    }
+
+    @Test
+    void testLotsOfSmallRegistersWithRollover() {
+        var dataStream = DataStream.range(0, 10, 1);
+        var searchItem = Data.of(4);
+        var registers = new Registers(1, 1, 1, 1, 1, 1);
+        storeWithSingleLookup(registers, dataStream, searchItem, 5);
+    }
+
+    @Test
+    void testFullRegisterContent() {
+        var dataStream = DataStream.range(0, 200, 1);
+        var searchItem = Data.of(196);
+        var registers = new Registers(2,3,4);
+
+        var solution = new Solution(registers);
+        while (true) {
+            var dataItem = dataStream.next();
+            if (dataItem.isEmpty()) {
+                break;
+            }
+            solution.store(dataItem.get());
+        }
+
+        assertEquals((Integer) 0, solution.lookup(Data.of(199)).get());
+        assertEquals((Integer) 0, solution.lookup(Data.of(198)).get());
+        assertEquals((Integer) 1, solution.lookup(Data.of(197)).get());
+        assertEquals((Integer) 1, solution.lookup(Data.of(196)).get());
+        assertEquals((Integer) 1, solution.lookup(Data.of(195)).get());
+        assertEquals((Integer) 2, solution.lookup(Data.of(194)).get());
+        assertEquals((Integer) 2, solution.lookup(Data.of(193)).get());
+        assertEquals((Integer) 2, solution.lookup(Data.of(192)).get());
+        assertEquals((Integer) 2, solution.lookup(Data.of(191)).get());
+    }
+
+
 }
