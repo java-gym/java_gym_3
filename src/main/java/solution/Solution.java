@@ -34,8 +34,6 @@ public class Solution {
 
     /**
      * Store the item into the first register, overflowing as necessary.
-     *
-     * @implNote The maximum worst-case complexity is logarithmic {@code (O(log(n)))}.
      */
     @Nonnull
     public void store(@Nonnull Data storeItem) {
@@ -45,8 +43,6 @@ public class Solution {
 
     /**
      * Return the register that an item if cached in, or empty if not cached.
-     *
-     * @implNote The maximum complexity is linear {@code (O(n))}.
      */
     @Nonnull
     public Optional<Integer> lookup(@Nonnull Data searchItem) {
