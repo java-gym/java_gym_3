@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import solution.Solution;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,7 +36,7 @@ class SolutionTest {
     void testCompletesWithoutErrors() {
         var dataStream = DataStream.range(0, 40, 1)
                 .join(DataStream.range(0, 40, 2))
-                .join(new DataStream(2, 7, 15, 33, 100));
+                .join(DataStream.of(2, 7, 15, 33, 100));
         var searchItem = Data.of(14);
         var registers = new Registers(2, 4, 3);
         var solution = new Solution(registers);
@@ -71,6 +73,68 @@ class SolutionTest {
         var searchItem = Data.of(10);
         var registers = new Registers(2, 4, 3);
         storeWithSingleLookup(registers, dataStream, searchItem, null);
+    }
+
+    @Test
+    void testReencounterItemAsLast() {
+        var dataStream = DataStream.range(0, 31, 2)
+                .add(Data.of(4));
+        var searchItem = Data.of(4);
+        var registers = new Registers(2, 4, 3);
+        storeWithSingleLookup(registers, dataStream, searchItem, 0);
+    }
+
+    @Test
+    void testReencounterItemAndShift() {
+        var dataStream = DataStream.range(0, 31, 2)
+                .join(DataStream.range(0, 7, 2));
+        var searchItem = Data.of(6);
+        var registers = new Registers(2, 4, 3);
+        storeWithSingleLookup(registers, dataStream, searchItem, 1);
+    }
+
+    @Test
+    void testLookupAfterEachItem() {
+        var registers = new Registers(1, 2, 3);
+        var solution = new Solution(registers);
+        solution.store(Data.of(1));
+        assertEquals(Integer.valueOf(0), solution.lookup(Data.of(1)).get());
+        solution.store(Data.of(1));
+        assertEquals(Integer.valueOf(0), solution.lookup(Data.of(1)).get());
+        assertEquals(Optional.empty(), solution.lookup(Data.of(4)));
+        solution.store(Data.of(2));
+        assertEquals(Integer.valueOf(1), solution.lookup(Data.of(1)).get());
+        assertEquals(Integer.valueOf(0), solution.lookup(Data.of(2)).get());
+        solution.store(Data.of(3));
+        assertEquals(Integer.valueOf(1), solution.lookup(Data.of(1)).get());
+        assertEquals(Integer.valueOf(1), solution.lookup(Data.of(2)).get());
+        assertEquals(Integer.valueOf(0), solution.lookup(Data.of(3)).get());
+        solution.store(Data.of(1));
+        assertEquals(Integer.valueOf(0), solution.lookup(Data.of(1)).get());
+        assertEquals(Integer.valueOf(1), solution.lookup(Data.of(2)).get());
+        assertEquals(Integer.valueOf(1), solution.lookup(Data.of(3)).get());
+        assertEquals(Optional.empty(), solution.lookup(Data.of(4)));
+        solution.store(Data.of(4));
+        solution.store(Data.of(5));
+        solution.store(Data.of(6));
+        solution.store(Data.of(7));
+        assertEquals(Integer.valueOf(2), solution.lookup(Data.of(1)).get());
+        assertEquals(Optional.empty(), solution.lookup(Data.of(2)));
+        assertEquals(Integer.valueOf(2), solution.lookup(Data.of(3)).get());
+        assertEquals(Integer.valueOf(2), solution.lookup(Data.of(4)).get());
+        assertEquals(Integer.valueOf(1), solution.lookup(Data.of(5)).get());
+        assertEquals(Integer.valueOf(1), solution.lookup(Data.of(6)).get());
+        assertEquals(Integer.valueOf(0), solution.lookup(Data.of(7)).get());
+        solution.store(Data.of(8));
+        solution.store(Data.of(1));
+        assertEquals(Integer.valueOf(0), solution.lookup(Data.of(1)).get());
+        assertEquals(Optional.empty(), solution.lookup(Data.of(2)));
+        assertEquals(Optional.empty(), solution.lookup(Data.of(3)));
+        assertEquals(Integer.valueOf(2), solution.lookup(Data.of(4)).get());
+        assertEquals(Integer.valueOf(2), solution.lookup(Data.of(5)).get());
+        assertEquals(Integer.valueOf(2), solution.lookup(Data.of(6)).get());
+        assertEquals(Integer.valueOf(1), solution.lookup(Data.of(7)).get());
+        assertEquals(Integer.valueOf(1), solution.lookup(Data.of(8)).get());
     }
 
     @Test

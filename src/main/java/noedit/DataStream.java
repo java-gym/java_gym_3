@@ -1,16 +1,15 @@
 package noedit;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.Validate;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.index.qual.Positive;
 import org.checkerframework.common.value.qual.MinLen;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public final class DataStream {
 
@@ -25,13 +24,6 @@ public final class DataStream {
         this.data = Arrays.asList(data);
     }
 
-    DataStream(@Nonnull Integer... data) {
-        this(Arrays.stream(data)
-                .map(Data::of)
-                .<Data>toArray(Data[]::new)
-        );
-    }
-
     @Nonnull
     public Optional<Data> next() {
         if (index >= data.size()) {
@@ -40,6 +32,15 @@ public final class DataStream {
         var item = data.get(index);
         index++;
         return Optional.of(item);
+    }
+
+    @Nonnull
+    static DataStream of(int... items) {
+        return new DataStream(
+                Arrays.stream(items)
+                        .mapToObj(Data::of)
+                        .toArray(Data[]::new)
+        );
     }
 
     @Nonnull
@@ -67,6 +68,14 @@ public final class DataStream {
         var items = new ArrayList<Data>(this.data.size() + other.data.size());
         items.addAll(this.data);
         items.addAll(other.data);
+        return new DataStream(items.toArray(new Data[0]));
+    }
+
+    @Nonnull
+    DataStream add(@Nonnull Data item) {
+        var items = new ArrayList<Data>(this.data.size() + 1);
+        items.addAll(this.data);
+        items.add(item);
         return new DataStream(items.toArray(new Data[0]));
     }
 }

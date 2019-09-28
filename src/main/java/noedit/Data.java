@@ -11,7 +11,7 @@ import org.checkerframework.checker.signedness.qual.SignedPositive;
 
 public final class Data {
 
-    private static final Map<Integer, Data> CACHE = new HashMap<>(1024);
+    private static final Map<Integer, Data> CACHE = new HashMap<>(16_384);
 
     @SignedPositive
     private final int nr;
