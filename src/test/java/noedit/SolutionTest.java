@@ -171,6 +171,34 @@ class SolutionTest {
     }
 
     @Test
+    void testBatchedData() {
+        var dataStream = DataStream.rep(-1, 25)
+                .join(DataStream.rep(0, 25))
+                .join(DataStream.rep(1, 25))
+                .join(DataStream.rep(2, 25))
+                .join(DataStream.rep(3, 25))
+                .join(DataStream.rep(4, 25))
+                .join(DataStream.rep(5, 25))
+                .join(DataStream.rep(6, 25))
+                .join(DataStream.rep(7, 25))
+                .join(DataStream.rep(8, 25))
+                .join(DataStream.rep(9, 25));
+        var searchItem = Data.of(0);
+        var registers = new Registers(2, 4, 3);
+        Solution sol = storeWithSingleLookup(registers, dataStream, searchItem, null);
+        assertEquals(Optional.empty(), sol.lookup(Data.of(-1)));
+        assertEquals(Integer.valueOf(0), sol.lookup(Data.of(9)).get());
+        assertEquals(Integer.valueOf(0), sol.lookup(Data.of(8)).get());
+        assertEquals(Integer.valueOf(1), sol.lookup(Data.of(7)).get());
+        assertEquals(Integer.valueOf(1), sol.lookup(Data.of(6)).get());
+        assertEquals(Integer.valueOf(1), sol.lookup(Data.of(5)).get());
+        assertEquals(Integer.valueOf(1), sol.lookup(Data.of(4)).get());
+        assertEquals(Integer.valueOf(2), sol.lookup(Data.of(3)).get());
+        assertEquals(Integer.valueOf(2), sol.lookup(Data.of(2)).get());
+        assertEquals(Integer.valueOf(2), sol.lookup(Data.of(1)).get());
+    }
+
+    @Test
     void testLargeRegisters() {
         var dataStream = DataStream.range(0, 200000, 1);
         var searchItem = Data.of((200000-(200+4200))-42);
@@ -205,7 +233,6 @@ class SolutionTest {
     @Test
     void testFullRegisterContent() {
         var dataStream = DataStream.range(0, 200, 1);
-        var searchItem = Data.of(196);
         var registers = new Registers(2,3,4);
 
         var solution = new Solution(registers);
@@ -227,6 +254,4 @@ class SolutionTest {
         assertEquals((Integer) 2, solution.lookup(Data.of(192)).get());
         assertEquals((Integer) 2, solution.lookup(Data.of(191)).get());
     }
-
-
 }
