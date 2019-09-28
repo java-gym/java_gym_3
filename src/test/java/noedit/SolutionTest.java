@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SolutionTest {
 
-    void storeWithSingleLookup(@Nonnull Registers registers, @Nonnull DataStream dataStream, @Nonnull Data searchItem, @Nullable Integer expectedRegister) {
+    @Nonnull
+    Solution storeWithSingleLookup(@Nonnull Registers registers, @Nonnull DataStream dataStream, @Nonnull Data searchItem, @Nullable Integer expectedRegister) {
         var solution = new Solution(registers);
         while (true) {
             var dataItem = dataStream.next();
@@ -30,6 +31,7 @@ class SolutionTest {
             assertTrue(answer.isPresent());
             assertEquals(expectedRegister, answer.get());
         }
+        return solution;
     }
 
     @Test
@@ -138,13 +140,43 @@ class SolutionTest {
     }
 
     @Test
+    void testRecycleSeveralTimes() {
+        var dataStream = DataStream.range(0, 12500, 1)
+                .join(DataStream.range(0, 12500, 1))
+                .join(DataStream.range(0, 12500, 1))
+                .join(DataStream.range(0, 12500, 1))
+                .join(DataStream.range(0, 12500, 1))
+                .join(DataStream.range(0, 12500, 1))
+                .join(DataStream.range(0, 12500, 1))
+                .join(DataStream.range(0, 12500, 1))
+                .reversed();
+        var searchItem = Data.of(12499);
+        var registers = new Registers(1000, 2000, 3000, 4000);
+        Solution sol = storeWithSingleLookup(registers, dataStream, searchItem, 0);
+        for (int i = 0; i < 1000; i += 11) {
+            assertEquals(Integer.valueOf(0), sol.lookup(Data.of(i)).get());
+        }
+        for (int i = 1000; i < 3000; i += 11) {
+            assertEquals(Integer.valueOf(1), sol.lookup(Data.of(i)).get());
+        }
+        for (int i = 3000; i < 6000; i += 11) {
+            assertEquals(Integer.valueOf(2), sol.lookup(Data.of(i)).get());
+        }
+        for (int i = 6000; i < 10_000; i += 11) {
+            assertEquals(Integer.valueOf(3), sol.lookup(Data.of(i)).get());
+        }
+        for (int i = 6000; i < 15_000; i += 11) {
+            assertEquals(Integer.valueOf(3), sol.lookup(Data.of(i)).get());
+        }
+    }
+
+    @Test
     void testLargeRegisters() {
         var dataStream = DataStream.range(0, 200000, 1);
         var searchItem = Data.of((200000-(200+4200))-42);
         var registers = new Registers(200, 4200, 200, 200000);
         storeWithSingleLookup(registers, dataStream, searchItem, 2);
     }
-
 
     @Test
     void testLargeStream() {

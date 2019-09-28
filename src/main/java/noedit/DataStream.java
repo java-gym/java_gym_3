@@ -45,7 +45,7 @@ public final class DataStream {
 
     @Nonnull
     static DataStream range(@NonNegative int start, @NonNegative int end, int step) {
-        Validate.isTrue((step > 0 && end >= start) || (step < 0 && end >= start));
+        Validate.isTrue(step > 0 && end >= start);
         var items = new ArrayList<Data>();
         for (int i = start; i < end; i += step) {
             items.add(Data.of(i));
@@ -77,5 +77,15 @@ public final class DataStream {
         items.addAll(this.data);
         items.add(item);
         return new DataStream(items.toArray(new Data[0]));
+    }
+
+    @Nonnull
+    DataStream reversed() {
+        int N = data.size();
+        Data[] rev = new Data[N];
+        for (int i = 0; i < N; i++) {
+            rev[i] = data.get(N - i - 1);
+        }
+        return new DataStream(rev);
     }
 }
