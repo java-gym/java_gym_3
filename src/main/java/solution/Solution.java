@@ -35,7 +35,6 @@ public class Solution {
     /**
      * Store the item into the first register, overflowing as necessary.
      */
-    @Nonnull
     public void store(@Nonnull Data storeItem) {
         //TODO: Implement your solution here
         throw new UnsupportedOperationException("solution not yet implemented");
