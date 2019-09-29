@@ -90,7 +90,7 @@ class SolutionTest {
     @Test
     void testReencounterItemAndShift() {
         var dataStream = DataStream.range(0, 31, 2)
-                .join(DataStream.range(0, 7, 2));
+                .join(DataStream.range(0, 7, 2).reversed());
         var searchItem = Data.of(6);
         var registers = new Registers(2, 4, 3);
         storeWithSingleLookup(registers, dataStream, searchItem, 1);
@@ -153,7 +153,7 @@ class SolutionTest {
                 .reversed();
         var searchItem = Data.of(12499);
         var registers = new Registers(1000, 2000, 3000, 4000);
-        Solution sol = storeWithSingleLookup(registers, dataStream, searchItem, 0);
+        Solution sol = storeWithSingleLookup(registers, dataStream, searchItem, null);
         for (int i = 0; i < 1000; i += 11) {
             assertEquals(Integer.valueOf(0), sol.lookup(Data.of(i)).get());
         }
@@ -166,8 +166,8 @@ class SolutionTest {
         for (int i = 6000; i < 10_000; i += 11) {
             assertEquals(Integer.valueOf(3), sol.lookup(Data.of(i)).get());
         }
-        for (int i = 6000; i < 15_000; i += 11) {
-            assertEquals(Integer.valueOf(3), sol.lookup(Data.of(i)).get());
+        for (int i = 10_000; i < 15_000; i += 11) {
+            assertTrue(sol.lookup(Data.of(i)).isEmpty());
         }
     }
 
