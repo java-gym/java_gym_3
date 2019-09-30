@@ -281,7 +281,7 @@ class SolutionTest {
     @Test
     void testDuplicateDataMore() {
         var dataStream = DataStream.of(1, 3, 4, 1, 1, 1, 2, 3);
-        var registers = new Registers(1, 1, 1);
+        var registers = new Registers(1, 1, 1, 1, 1);
         Solution solution = storeWithSingleLookup(registers, dataStream, Data.of(5), null);
 
         assertEquals(Integer.valueOf(2), solution.lookup(Data.of(1)).get());
